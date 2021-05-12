@@ -18,7 +18,7 @@ def test_mocklambda():
         Description='string',
     )
 
-    #create bucket and file in S3
+    # create bucket and file in S3
     s3_client = boto3.client("s3")
     s3_client.create_bucket(Bucket="test_bucket")
     s3evnt = S3Handler()

@@ -9,7 +9,6 @@ class LambdaHandler:
         self.lambdaclient = boto3.client('lambda', region_name='us-east-1')
         self.lambdaname = "start_glue_job"
 
-
     def create_lambda(self):
         create_lambda_function = self.lambdaclient.create_function(
             FunctionName=self.lambdaname,
@@ -18,7 +17,6 @@ class LambdaHandler:
             Handler='{}.lambda_handler'.format('trigger_glue'),
             Description='trigger a glue job',
             Code={'S3Bucket': 'test_bucket', 'S3Key': 'trigger_glue.zip'})
-
 
     def invoke_lambda(self):
         response = self.lambdaclient.invoke(

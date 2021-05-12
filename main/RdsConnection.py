@@ -9,10 +9,10 @@ def test_create_database():
         DBInstanceIdentifier="postgres-cluster",
         AllocatedStorage=10,
         Engine="postgres",
-        DBName="awstestsuite",
+        DBName="testsuite",
         DBInstanceClass="db.t2.micro",
         MasterUsername="AwsTestSuite",
-        MasterUserPassword="awstestsuite",
+        MasterUserPassword="testsuite",
         Port=5432,
         DBSecurityGroups=["my_sg"],
         VpcSecurityGroupIds=["sg-123456"],
@@ -40,5 +40,6 @@ def test_create_database():
         print("Instance started")
     if response["DBInstance"]["DBInstanceStatus"] == 'available':
         print("Instance is available")
+
 
 test_create_database()
