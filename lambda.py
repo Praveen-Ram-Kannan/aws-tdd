@@ -5,10 +5,8 @@ import boto3
 import docker
 
 
-@moto.mock_lambda
-@moto.mock_s3
 @moto.mock_iam
-def test_mocklambda():
+def test_iamrole():
     # create IAM role
     iam_client = boto3.client('iam')
     iam_client.create_role(
@@ -18,6 +16,11 @@ def test_mocklambda():
         Description='string',
     )
 
+
+@moto.mock_lambda
+@moto.mock_s3
+def test_mocklambda():
+    test_iamrole()
     # create bucket and file in S3
     s3_client = boto3.client("s3")
     s3_client.create_bucket(Bucket="test_bucket")
