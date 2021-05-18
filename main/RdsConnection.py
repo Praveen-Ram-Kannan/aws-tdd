@@ -19,36 +19,29 @@ def test_create_database(event, context):
         VpcSecurityGroupIds=["sg-123456"],
     )
 
-    print("Instance created")
-
     instances = conn.describe_db_instances(
         DBInstanceIdentifier=database["DBInstance"]["DBInstanceIdentifier"]
     )["DBInstances"][0]
 
     if instances["DBInstanceStatus"]:
-        print("Instance is available")
+        print("RDS test case 1 : Instance is  created & available")
 
     response = conn.stop_db_instance(
         DBInstanceIdentifier=instances["DBInstanceIdentifier"],
     )
-    if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
-        print("Instance started")
-    if response["DBInstance"]["DBInstanceStatus"] == 'stopped':
-        print("Instance is stopped")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and response["DBInstance"]["DBInstanceStatus"] == 'stopped':
+        print("RDS test case 1 : Instance is stopped")
 
     response = conn.start_db_instance(DBInstanceIdentifier=instances["DBInstanceIdentifier"])
-    if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
-        print("Instance started")
-    if response["DBInstance"]["DBInstanceStatus"] == 'available':
-        print("Instance is available")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and response["DBInstance"]["DBInstanceStatus"] == 'available':
+        print("RDS test case 1 : Instance is available")
 
+    # Publish message to SNS
     message = json.dumps({
-        "Status": response["ResponseMetadata"]["HTTPStatusCode"],
+        "HTTPStatusCode": response["ResponseMetadata"]["HTTPStatusCode"],
         "instances_availability": response["DBInstance"]["DBInstanceStatus"]
 
     })
 
     SnsMoto_obj = SnsMoto(message)
     SnsMoto_obj.test_sns_sqs()
-
-    return message

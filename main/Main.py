@@ -24,7 +24,8 @@ def test_main():
 
     # create bucket and file in S3
     s3_client = boto3.resource("s3")
-    s3_client.create_bucket(Bucket="testsuite_bucket")
+    s3_response = s3_client.create_bucket(Bucket="testsuite_bucket")
+    print("S3 Test Case 1 : ", s3_response)
 
     # Uploading zip file for Lambda
     upload_file_instance = S3Upload("Rds_lambda_trigger.zip", "testsuite_bucket")
@@ -33,16 +34,11 @@ def test_main():
     upload_response = s3_client.Object('testsuite_bucket', 'script/Rds_lambda_trigger.zip').get()[
         'ResponseMetadata']['HTTPStatusCode']
     if upload_response == 200:
-        print("Rds_lambda_trigger.zip file uploaded")
+        print("S3 Test Case 2 : Rds_lambda_trigger.zip file uploaded")
 
-    # Uploading py file for glue
-    # upload_file_instance = S3Upload("RdsConnection.py", "testsuite_bucket")
-    # upload_file_instance.upload_script()
-    #
-    # upload_response = s3_client.Object('testsuite_bucket', 'script/RdsConnection.py').get()[
-    #     'ResponseMetadata']['HTTPStatusCode']
-    # if upload_response == 200:
-    #     print("trigger_glue.py file uploaded")
+    #Read file content
+    #TODO
+    print("S3 Test Case 3 : Rds_lambda_trigger.zip file uploaded")
 
     # Create Lambda Function
     lambda_client = boto3.client("lambda", region_name='us-east-1')
@@ -51,11 +47,15 @@ def test_main():
     function_nm = lambda_client.list_functions()
 
     if function_nm["Functions"][0]["FunctionName"] == "Rds_lambda_trigger":
+        print("Lambda Test Case 1 : ")
         print("lambda function " + str(function_nm["Functions"][0]["FunctionName"]) + " created")
+
     lambda_response = lambda_event.invoke_lambda()
-    print(lambda_response)
+
     if "FunctionError" in lambda_response:
         print(lambda_response["Payload"].read().decode("utf-8"))
+    else:
+        print("Lambda Test Case 2 : ", lambda_response["ResponseMetadata"]["HTTPStatusCode"])
 
     # Uploading csv file for lambda trigger
     upload_file_instance = S3Upload("sample_csv.csv", "testsuite_bucket")

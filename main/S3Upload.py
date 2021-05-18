@@ -26,6 +26,7 @@ class S3Upload(object):
         key = "csv/" + self.file
         self.s3client.upload_file(path, self.bucket, key)
 
+    #TODO
     def lambda_add_permission(self):
         self.lambdaClient.add_permission(
             FunctionName=self.lambdaName,
