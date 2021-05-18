@@ -1,6 +1,5 @@
 import os
 import boto3
-import json
 
 
 class LambdaHandler:
@@ -23,7 +22,6 @@ class LambdaHandler:
         self.s3client.upload_file(path, self.bucket, self.file)
 
     def create_lambda(self):
-
         create_lambda_function = self.lambdaClient.create_function(
             FunctionName=self.lambdaName,
             Runtime='python3.8',
@@ -61,7 +59,6 @@ class LambdaHandler:
     #         Payload=json.dumps({'job_name': "lambda_glue_s", 'detail': "lambda to glue trigger"})
     #     )
     #     return response
-
 
 # lambda_client = boto3.client("lambda")
 # lambdaevnt = LambdaHandler()

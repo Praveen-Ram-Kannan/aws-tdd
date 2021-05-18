@@ -1,7 +1,6 @@
 import boto3
 import moto
-import json
-from main.SnsMoto import SnsMoto
+from SnsMoto import SnsMoto
 
 
 @moto.mock_rds2
@@ -26,22 +25,22 @@ def test_create_database(event, context):
         DBInstanceIdentifier=database["DBInstance"]["DBInstanceIdentifier"]
     )["DBInstances"][0]
 
-    # if instances["DBInstanceStatus"]:
-    #     print("Instance is available")
+    if instances["DBInstanceStatus"]:
+        print("Instance is available")
 
     response = conn.stop_db_instance(
         DBInstanceIdentifier=instances["DBInstanceIdentifier"],
     )
-    # if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
-    #     print("Instance started")
-    # if response["DBInstance"]["DBInstanceStatus"] == 'stopped':
-    #     print("Instance is stopped")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+        print("Instance started")
+    if response["DBInstance"]["DBInstanceStatus"] == 'stopped':
+        print("Instance is stopped")
 
     response = conn.start_db_instance(DBInstanceIdentifier=instances["DBInstanceIdentifier"])
-    # if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
-    #     print("Instance started")
-    # if response["DBInstance"]["DBInstanceStatus"] == 'available':
-    #     print("Instance is available")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+        print("Instance started")
+    if response["DBInstance"]["DBInstanceStatus"] == 'available':
+        print("Instance is available")
 
     message = json.dumps({
         "Status": response["ResponseMetadata"]["HTTPStatusCode"],

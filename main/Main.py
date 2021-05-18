@@ -1,7 +1,7 @@
 import boto3
 import moto
 from main.S3Upload import S3Upload
-from LambdaHandler import LambdaHandler
+from main.LambdaHandler import LambdaHandler
 
 
 @moto.mock_iam
@@ -53,6 +53,7 @@ def test_main():
     if function_nm["Functions"][0]["FunctionName"] == "Rds_lambda_trigger":
         print("lambda function " + str(function_nm["Functions"][0]["FunctionName"]) + " created")
     lambda_response = lambda_event.invoke_lambda()
+    print(lambda_response)
     if "FunctionError" in lambda_response:
         print(lambda_response["Payload"].read().decode("utf-8"))
 
@@ -67,4 +68,5 @@ def test_main():
 
 
 if __name__ == "__main__":
+    # Main Function
     test_main()
