@@ -33,8 +33,7 @@ def test_mocklambda():
     lambdaevnt.create_lambda()
     response = lambdaevnt.invoke_lambda()
     response1 = lambda_client.list_functions()
-    print(response)
-    print(response1)
+
 
 
 test_mocklambda()

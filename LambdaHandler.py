@@ -6,23 +6,23 @@ import json
 class LambdaHandler:
 
     def __init__(self):
-        self.lambdaclient = boto3.client('lambda', region_name='us-east-1')
-        self.lambdaname = "start_glue_job"
+        self.lambda_client = boto3.client('lambda', region_name='us-east-1')
+        self.lambda_name = "Rds_lambda_trigger"
 
     def create_lambda(self):
-        create_lambda_function = self.lambdaclient.create_function(
-            FunctionName=self.lambdaname,
+        self.lambda_client.create_function(
+            FunctionName=self.lambda_name,
             Runtime='python3.8',
             Role='arn:aws:iam::123456789012:role/my-path/test_role',
-            Handler='{}.lambda_handler'.format('trigger_glue'),
-            Description='trigger a glue job',
-            Code={'S3Bucket': 'test_bucket', 'S3Key': 'trigger_glue.zip'})
+            Handler='{}.test_create_database'.format('RdsConnection'),
+            Description='create Rds instance',
+            Code={'S3Bucket': 'testsuite_bucket', 'S3Key': 'script/Rds_lambda_trigger.zip'})
 
     def invoke_lambda(self):
-        response = self.lambdaclient.invoke(
-            FunctionName=self.lambdaname,
-            InvocationType='RequestResponse',
+        response = self.lambda_client.invoke(
+            FunctionName=self.lambda_name,
+            InvocationType='Event',
             LogType='Tail',
-            Payload=json.dumps({'job_name': "lambda_glue_s", 'detail': "lambda to glue trigger"})
+            Payload=json.dumps({'job_name': "Rds_lambda_trigger", 'detail': "lambda rds trigger"})
         )
         return response
