@@ -24,9 +24,11 @@ class S3Upload(object):
     def upload_csv(self):
         path = os.path.join(self.csv_path, self.file)
         key = "csv/" + self.file
-        self.s3client.upload_file(path, self.bucket, key)
+        csv_response = self.s3client.put_object(Body="hello", Bucket=self.bucket, Key=key)
 
-    #TODO
+        return csv_response
+
+    # TODO
     def lambda_add_permission(self):
         self.lambdaClient.add_permission(
             FunctionName=self.lambdaName,

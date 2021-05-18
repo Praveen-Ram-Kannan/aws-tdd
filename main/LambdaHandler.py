@@ -22,5 +22,6 @@ class LambdaHandler:
             FunctionName=self.lambda_name,
             InvocationType='Event',
             LogType='Tail',
+            Payload=json.dumps({'job_name': "Rds_lambda_trigger", 'detail': "lambda rds trigger"})
         )
         return response

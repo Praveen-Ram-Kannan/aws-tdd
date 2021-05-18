@@ -5,7 +5,7 @@ from main.LambdaHandler import LambdaHandler
 
 
 @moto.mock_iam
-def test_iamrole():
+def test_iam_role():
     # create IAM role
     iam_client = boto3.client('iam')
     iam_client.create_role(
@@ -20,7 +20,7 @@ def test_iamrole():
 @moto.mock_s3
 def test_main():
     # Create iam Role
-    test_iamrole()
+    test_iam_role()
 
     # create bucket and file in S3
     s3_client = boto3.resource("s3")
@@ -36,9 +36,14 @@ def test_main():
     if upload_response == 200:
         print("S3 Test Case 2 : Rds_lambda_trigger.zip file uploaded")
 
-    #Read file content
-    #TODO
-    print("S3 Test Case 3 : Rds_lambda_trigger.zip file uploaded")
+    # Uploading csv file for data validation
+    expected_result = "hello"
+    upload_file_instance = S3Upload("sample_csv.csv", "testsuite_bucket")
+    upload_file_instance.upload_csv()
+    actual_result = s3_client.Object("testsuite_bucket", "csv/sample_csv.csv").get()["Body"].read().decode()
+
+    if expected_result == actual_result:
+        print("S3 Test Case 3 : File Content Matches ")
 
     # Create Lambda Function
     lambda_client = boto3.client("lambda", region_name='us-east-1')
@@ -47,24 +52,14 @@ def test_main():
     function_nm = lambda_client.list_functions()
 
     if function_nm["Functions"][0]["FunctionName"] == "Rds_lambda_trigger":
-        print("Lambda Test Case 1 : ")
-        print("lambda function " + str(function_nm["Functions"][0]["FunctionName"]) + " created")
+        print("Lambda Test Case 1 : " + str(function_nm["Functions"][0]["FunctionName"]) + " created")
 
     lambda_response = lambda_event.invoke_lambda()
+    print("Lambda Test Case 2 HTTPStatusCode : ", lambda_response["ResponseMetadata"]["HTTPStatusCode"])
 
     if "FunctionError" in lambda_response:
-        print(lambda_response["Payload"].read().decode("utf-8"))
-    else:
-        print("Lambda Test Case 2 : ", lambda_response["ResponseMetadata"]["HTTPStatusCode"])
-
-    # Uploading csv file for lambda trigger
-    upload_file_instance = S3Upload("sample_csv.csv", "testsuite_bucket")
-    upload_file_instance.upload_csv()
-
-    upload_response = s3_client.Object('testsuite_bucket', 'csv/sample_csv.csv').get()[
-        'ResponseMetadata']['HTTPStatusCode']
-    if upload_response == 200:
-        print("sample_csv.csv file uploaded")
+        print("Lambda triggered But Error occurred when executing the method ",
+              lambda_response["Payload"].read().decode("utf-8"))
 
 
 if __name__ == "__main__":

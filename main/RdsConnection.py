@@ -1,5 +1,6 @@
 import boto3
 import moto
+import json
 from SnsMoto import SnsMoto
 
 
@@ -29,12 +30,14 @@ def test_create_database(event, context):
     response = conn.stop_db_instance(
         DBInstanceIdentifier=instances["DBInstanceIdentifier"],
     )
-    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and response["DBInstance"]["DBInstanceStatus"] == 'stopped':
-        print("RDS test case 1 : Instance is stopped")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and \
+            response["DBInstance"]["DBInstanceStatus"] == 'stopped':
+        print("RDS test case 2 : Instance is stopped")
 
     response = conn.start_db_instance(DBInstanceIdentifier=instances["DBInstanceIdentifier"])
-    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and response["DBInstance"]["DBInstanceStatus"] == 'available':
-        print("RDS test case 1 : Instance is available")
+    if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and \
+            response["DBInstance"]["DBInstanceStatus"] == 'available':
+        print("RDS test case 3 : Instance is available")
 
     # Publish message to SNS
     message = json.dumps({
@@ -45,3 +48,5 @@ def test_create_database(event, context):
 
     SnsMoto_obj = SnsMoto(message)
     SnsMoto_obj.test_sns_sqs()
+
+    return message
