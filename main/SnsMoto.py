@@ -29,7 +29,7 @@ class SnsMoto:
               "\n\tHTTPStatusCode : ", subscribe_response["ResponseMetadata"]["HTTPStatusCode"])
 
         # publish message
-        sns_client.publish(TopicArn=topic_arn, Message="self.message")
+        sns_client.publish(TopicArn=topic_arn, Message=self.message)
 
         queue = sqs_client.get_queue_by_name(QueueName="awstestsuite-result-queue")
         messages = queue.receive_messages(MaxNumberOfMessages=1)
