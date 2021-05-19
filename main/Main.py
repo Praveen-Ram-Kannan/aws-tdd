@@ -60,6 +60,9 @@ def test_main():
     if "FunctionError" in lambda_response:
         print("Lambda triggered But Error occurred when executing the method ",
               lambda_response["Payload"].read().decode("utf-8"))
+    else:
+        print("Lambda triggered with response : ",
+              lambda_response["Payload"].read().decode("utf-8"))
 
 
 if __name__ == "__main__":
