@@ -8,7 +8,7 @@ from main.SnsMoto import SnsMoto
 @moto.mock_iam
 def test_iam_role():
     # create IAM role
-    iam_client = boto3.client('iam')
+    iam_client = boto3.client('iam', region_name='us-east-1')
     iam_client.create_role(
         Path='/my-path/',
         RoleName='test_role',
@@ -26,7 +26,7 @@ def test_main():
     test_iam_role()
 
     # create bucket and file in S3
-    s3_client = boto3.resource("s3")
+    s3_client = boto3.resource("s3", region_name='us-east-1')
     s3_response = s3_client.create_bucket(Bucket="testsuite_bucket")
     print("S3 Test Case 1 : ", s3_response)
 

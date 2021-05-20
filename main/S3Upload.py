@@ -14,7 +14,7 @@ class S3Upload(object):
         self.action = "lambda:InvokeFunction"
         self.source_arn = "arn:aws:s3:::testsuite_bucket"
         self.s3client = boto3.client('s3', region_name='us-east-1')
-        self.lambdaClient = boto3.client('lambda')
+        self.lambdaClient = boto3.client('lambda', region_name='us-east-1')
 
     def upload_script(self):
         path = os.path.join(self.script_path, self.file)

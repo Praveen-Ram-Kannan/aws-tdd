@@ -1,4 +1,10 @@
 # aws-tdd
+Dependent packages
+1. moto
+2. boto3
+
+Windows Docker - https://docs.docker.com/docker-for-windows/install/
+Linux Kernel - https://docs.microsoft.com/en-us/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package
 
 # TestCase Covered
 
