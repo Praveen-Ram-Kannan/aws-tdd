@@ -11,7 +11,7 @@ class LambdaHandler:
     def create_lambda(self):
         self.lambda_client.create_function(
             FunctionName=self.lambda_name,
-            Runtime='python3.8',
+            Runtime='python3.7',
             Role='arn:aws:iam::123456789012:role/my-path/test_role',
             Handler='{}.test_create_database'.format('RdsConnection'),
             Description='create Rds instance',

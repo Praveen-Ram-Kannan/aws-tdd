@@ -7,7 +7,6 @@ S3
     Testcase 1 : validate table creation
     Testcase 2 : validate file upload
     Testcase 3 : validate file content
-    Testcase 4 : validate event trigger on file upload
 
 
 Lambda
@@ -25,7 +24,6 @@ SNS
 
     Testcase 1 : validate SNS Topic Creation
     Testcase 2 : validate Topic Supscription
-    Testcase 3 : validate Publish Function
 
 SQS
 

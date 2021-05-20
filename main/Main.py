@@ -2,6 +2,7 @@ import boto3
 import moto
 from main.S3Upload import S3Upload
 from main.LambdaHandler import LambdaHandler
+from main.SnsMoto import SnsMoto
 
 
 @moto.mock_iam
@@ -18,6 +19,8 @@ def test_iam_role():
 
 @moto.mock_lambda
 @moto.mock_s3
+@moto.mock_sns
+@moto.mock_sqs
 def test_main():
     # Create iam Role
     test_iam_role()
@@ -37,10 +40,10 @@ def test_main():
         print("S3 Test Case 2 : Rds_lambda_trigger.zip file uploaded")
 
     # Uploading csv file for data validation
-    expected_result = "hello"
-    upload_file_instance = S3Upload("sample_csv.csv", "testsuite_bucket")
-    upload_file_instance.upload_csv()
-    actual_result = s3_client.Object("testsuite_bucket", "csv/sample_csv.csv").get()["Body"].read().decode()
+    expected_result = "test_obj"
+    upload_file_instance = S3Upload("sample_file.txt", "testsuite_bucket")
+    upload_file_instance.upload_obj()
+    actual_result = s3_client.Object("testsuite_bucket", "file/sample_file.txt").get()["Body"].read().decode()
 
     if expected_result == actual_result:
         print("S3 Test Case 3 : File Content Matches ")
@@ -59,10 +62,10 @@ def test_main():
 
     if "FunctionError" in lambda_response:
         print("Lambda triggered But Error occurred when executing the method ",
-              lambda_response["Payload"].read().decode("utf-8"))
+              lambda_response["Payload"]._raw_stream.read().decode("utf-8"))
     else:
         print("Lambda triggered with response : ",
-              lambda_response["Payload"].read().decode("utf-8"))
+              lambda_response["Payload"]._raw_stream.read().decode("utf-8"))
 
 
 if __name__ == "__main__":

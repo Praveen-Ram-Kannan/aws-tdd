@@ -21,41 +21,9 @@ class S3Upload(object):
         key = "script/" + self.file
         self.s3client.upload_file(path, self.bucket, key)
 
-    def upload_csv(self):
+    def upload_obj(self):
         path = os.path.join(self.csv_path, self.file)
-        key = "csv/" + self.file
-        csv_response = self.s3client.put_object(Body="hello", Bucket=self.bucket, Key=key)
+        key = "file/" + self.file
+        csv_response = self.s3client.put_object(Body="test_obj", Bucket=self.bucket, Key=key)
 
         return csv_response
-
-    # TODO
-    def lambda_add_permission(self):
-        self.lambdaClient.add_permission(
-            FunctionName=self.lambdaName,
-            StatementId=1,
-            Action=self.action,
-            Principal=self.principal,
-            SourceArn=self.source_arn
-        )
-
-        self.lambdaClient.get_policy(FunctionName=self.lambdaName)
-
-    def add_trigger(self):
-        response = self.s3client.put_bucket_notification_configuration(
-            Bucket="testsuite_bucket",
-            NotificationConfiguration={'LambdaFunctionConfigurations': [
-                {"LambdaFunctionArn": "arn:aws:lambda:us-east-1:672580443112:function:Rds_lambda_trigger",
-                 "Events": ["s3:ObjectCreated:*"],
-                 'Filter': {
-                     'Key': {
-                         'FilterRules': [
-                             {
-                                 'Name': 'csv/' | '.csv',
-                             }
-                         ]
-                     }
-                 }
-                 }]}
-
-        )
-        return response

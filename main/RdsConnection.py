@@ -4,6 +4,8 @@ import json
 from SnsMoto import SnsMoto
 
 
+@moto.mock_sqs
+@moto.mock_sns
 @moto.mock_rds2
 def test_create_database(event, context):
     conn = boto3.client("rds", region_name="us-east-1")
@@ -25,28 +27,33 @@ def test_create_database(event, context):
     )["DBInstances"][0]
 
     if instances["DBInstanceStatus"]:
-        print("RDS test case 1 : Instance is  created & available")
+        rds_1 = "RDS test case 1 : Instance is  created & available"
 
     response = conn.stop_db_instance(
         DBInstanceIdentifier=instances["DBInstanceIdentifier"],
     )
     if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and \
             response["DBInstance"]["DBInstanceStatus"] == 'stopped':
-        print("RDS test case 2 : Instance is stopped")
+        rds_2 = "RDS test case 2 : Instance is stopped"
 
     response = conn.start_db_instance(DBInstanceIdentifier=instances["DBInstanceIdentifier"])
     if response["ResponseMetadata"]["HTTPStatusCode"] == 200 and \
             response["DBInstance"]["DBInstanceStatus"] == 'available':
-        print("RDS test case 3 : Instance is available")
+        rds_3 = "RDS test case 3 : Instance is available"
 
     # Publish message to SNS
-    message = json.dumps({
+    rds_message = json.dumps({
         "HTTPStatusCode": response["ResponseMetadata"]["HTTPStatusCode"],
         "instances_availability": response["DBInstance"]["DBInstanceStatus"]
 
     })
 
-    SnsMoto_obj = SnsMoto(message)
-    SnsMoto_obj.test_sns_sqs()
+    sns_obj = SnsMoto()
+    sns_1, sns_2, sqs_1, sqs_2 = sns_obj.create_sns_sqs(rds_message)
 
-    return message
+    lambda_message = json.dumps({
+        "RDS": [rds_1, rds_2, rds_3],
+        "SQS": [sns_1, sns_2, sqs_1, sqs_2]
+    })
+
+    return lambda_message
